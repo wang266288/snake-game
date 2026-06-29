@@ -2,6 +2,7 @@
 
 use crate::snake::Snake;
 use crate::ai::find_path;
+use crate::high_score;
 use rand::Rng;
 
 /// 游戏核心结构，包含蛇、食物、分数、状态及定时器。
@@ -63,6 +64,7 @@ impl Game {
         // 3. 无空位 → 胜利
         self.game_over = true;
         self.won = true;
+        high_score::save(self.high_score); 
     }
 
     /// 更新游戏逻辑：计时驱动移动，处理 AI 决策、碰撞检测、得分及食物生成。
@@ -103,12 +105,14 @@ impl Game {
             if head.0 < 0 || head.0 >= crate::GRID_SIZE || head.1 < 0 || head.1 >= crate::GRID_SIZE {
                 self.game_over = true;
                 self.won = false;
+                high_score::save(self.high_score);
                 crate::sound::play_gameover();  // 播放游戏结束音效
                 return;
             }
             if self.snake.positions().skip(1).any(|&p| p == head) {
                 self.game_over = true;
                 self.won = false;
+                high_score::save(self.high_score);
                 crate::sound::play_gameover();
                 return;
             }
